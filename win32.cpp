@@ -32,7 +32,7 @@ LRESULT CALLBACK WindowCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
             renderState.bitMapInfo.bmiHeader.biSize        = sizeof(renderState.bitMapInfo.bmiHeader);
             renderState.bitMapInfo.bmiHeader.biWidth       = renderState.width;
-            renderState.bitMapInfo.bmiHeader.biHeight      = renderState.height;
+            renderState.bitMapInfo.bmiHeader.biHeight      = -renderState.height;
             renderState.bitMapInfo.bmiHeader.biPlanes      = 1;
             renderState.bitMapInfo.bmiHeader.biBitCount    = 32;
             renderState.bitMapInfo.bmiHeader.biCompression = BI_RGB;

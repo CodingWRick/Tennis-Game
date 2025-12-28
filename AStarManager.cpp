@@ -5,7 +5,7 @@ float step;
 void GenerateNodeGrid() {
     nodes.clear();
 
-    const float defaultStep = 32.0f;
+    const float defaultStep = 16.f;
     step = defaultStep;
 
     for (float y = 0; y <= renderState.height; y += step) {

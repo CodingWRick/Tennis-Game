@@ -2,8 +2,8 @@
 
 void Player::Draw() {
     // Draw using pixel coordinates
-    int x = (int)(posX - halfSizeX);
-    int y = (int)(posY - halfSizeY);
+    int x = (int)(posX);
+    int y = (int)(posY);
     int x1 = (int)(posX + halfSizeX);
     int y1 = (int)(posY + halfSizeY);
     PixelDrawRect(x, y, x1, y1, color);
@@ -20,12 +20,6 @@ void Player::SetTarget(float x, float y) {
         gridGenerated = true;
     }
 
-    // Ensure player starts centered once grid (and render dimensions) are available
-    if (gridGenerated && (posX == 0.f && posY == 0.f)) {
-        posX = renderState.width / 2.f;
-        posY = renderState.height / 2.f;
-    }
-
     path.clear();
     path = GeneratePath(FindClosestNode(posX, posY), FindClosestNode(x, y));
     logger.Log(LOG_INFO, "player node: " + std::to_string(FindClosestNode(posX, posY)->posX) + ", " + std::to_string(FindClosestNode(posX, posY)->posY));
@@ -35,7 +29,7 @@ void Player::SetTarget(float x, float y) {
 void Player::FollowPath(float deltaTime) {
     if (path.size() < 2) return;
 
-    const float arrivalThreshold = step * 0.5f;
+    const float arrivalThreshold = 0.01f;
 
     while (path.size() > 1) {
         Node* nextNodeCheck = path[1];
