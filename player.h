@@ -13,7 +13,7 @@ class Player {
         float posX = 0.f;
         float posY = 0.f;
 
-        float speed = 50.f;
+        float speed = 100.f;
 
         bool moving = false;
 

@@ -1,4 +1,5 @@
 #include "networking.h"
+#include "game.h"
 
 void ClientInit() {
     ENetHost* client = nullptr;
@@ -8,6 +9,8 @@ void ClientInit() {
     if(client == NULL) {
         Log(LOG_ERROR, "Failed to create ENet client host.");
         return;
+    } else {
+        isServer = false;
     }
 
     ENetAddress address = {};
@@ -27,10 +30,22 @@ void ClientInit() {
             while(true) {
                 while(enet_host_service(client, &event, 10) > 0) {
                     switch(event.type) {
-                        case ENET_EVENT_TYPE_RECEIVE:
-                            Log(LOG_INFO, "A packet of length " + std::to_string(event.packet->dataLength) + " was received from the server.");
+                        case ENET_EVENT_TYPE_RECEIVE: {
+                            Log(LOG_INFO, "Paccehtto di lunghezza: " + std::to_string(event.packet->dataLength) + " è stato ricevuto dal server.");
+                            size_t bytes = event.packet->dataLength;
+                            if (bytes > 0 && bytes % sizeof(POINT) == 0) {
+                                size_t count = bytes / sizeof(POINT);
+                                POINT* pts = (POINT*)event.packet->data;
+                                std::vector<POINT> data;
+                                data.reserve(count);
+                                for (size_t i = 0; i < count; ++i) data.push_back(pts[i]);
+                                mapGenerator.SetMapData(data);
+                            } else {
+                                Log(LOG_ERROR, "Received malformed map data (size mismatch).");
+                            }
                             enet_packet_destroy(event.packet);
                             break;
+                        }
                         case ENET_EVENT_TYPE_DISCONNECT:
                             Log(LOG_INFO, "Disconnesso dal server.");
                             return;

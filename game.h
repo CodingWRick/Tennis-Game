@@ -14,11 +14,13 @@
 #define pressed(b) (input->buttons[b].isDown && input->buttons[b].changed)
 #define released(b) (!input->buttons[b].isDown && input->buttons[b].changed)
 
-bool eNetInit = false;
-int myPlayerId = 0;
+extern bool eNetInit;
+extern int myPlayerId;
 
 // Use internal if you want this function private to game.cpp
 void SimulateGame(Input* input, float deltaTime);
 
 class Player;
 extern std::vector<Player> players;
+
+extern MapGenerator mapGenerator;

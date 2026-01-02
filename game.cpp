@@ -1,6 +1,8 @@
 #include "game.h"
 
 std::vector<Player> players;
+bool eNetInit = false;
+int myPlayerId = 0;
 MapGenerator mapGenerator;
 
 void SimulateGame(Input* input, float deltaTime) {
@@ -10,8 +12,6 @@ void SimulateGame(Input* input, float deltaTime) {
             Log(LOG_ERROR, "Failed to initialize ENet.");
         } else {
             Log(LOG_INFO, "Network inizializzato.");
-            // Launch networking prompt & runtime on a background thread so the
-            // main window/message loop remains responsive.
             Log(LOG_INFO, "Server o Client? (s/c): ");
             std::thread([](){
                 char choice = '\0';

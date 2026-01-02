@@ -86,3 +86,13 @@ void MapGenerator::ResetMap() {
     obstaclesGenerated = false;
     gridGenerated = false;
 }
+
+const std::vector<POINT>& MapGenerator::GetMapData() {
+    return obstacles;
+}
+
+void MapGenerator::SetMapData(const std::vector<POINT>& data) {
+    obstacles = data;
+    ResetMap();
+    Log(LOG_ERROR, "Mappa non settata correttamente");
+}

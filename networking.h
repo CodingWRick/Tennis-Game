@@ -4,7 +4,10 @@
 
 extern int maxClients;
 extern int currentClients;
+extern bool isServer;
+extern bool mapInitialized;
 
-void SendData(const char* message, size_t s, ENetPeer *to);
+void SendData(const void* message, size_t s, ENetPeer *to);
+void SendMapData(ENetPeer *to);
 void ServerInit();
 void ClientInit();

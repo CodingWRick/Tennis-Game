@@ -1,9 +1,5 @@
 #include "networking.h"
-
-void SendData(const char* message, size_t s, ENetPeer *to) {
-    ENetPacket* packet = enet_packet_create(message, s, ENET_PACKET_FLAG_RELIABLE);
-    enet_peer_send(to, 0, packet);
-}
+#include "game.h"
 
 void ServerInit() {
     ENetAddress address = {};
@@ -17,6 +13,7 @@ void ServerInit() {
         return;
     } else {
         Log(LOG_INFO, "Host creato con successo.");
+        isServer = true;
     }
 
     ENetPeer *client = 0;
@@ -27,11 +24,11 @@ void ServerInit() {
             switch(event.type) {
                 case ENET_EVENT_TYPE_CONNECT:
                     Log(LOG_INFO, "Nuovo client connesso " + std::to_string(event.peer->address.host) + ":" + std::to_string(event.peer->address.port));
+                    SendMapData(event.peer);
                     client = event.peer;
                     currentClients++;
                     break;
                 case ENET_EVENT_TYPE_RECEIVE:
-                    Log(LOG_INFO, "A packet of length " + std::to_string(event.packet->dataLength) + " was received from " + std::to_string(event.peer->address.host) + ":" + std::to_string(event.peer->address.port));
                     enet_packet_destroy(event.packet);
                     break;
                 case ENET_EVENT_TYPE_DISCONNECT:
