@@ -8,7 +8,7 @@ echo %ESC%[35mBuilding test.exe...%ESC%[0m
 echo %ESC%[35m============================================%ESC%[0m
 
 set COMPILER=g++
-set FLAGS=-std=c++20 -Wall -Wextra -O2 -static
+set FLAGS=-std=c++20 -w -O2 -static
 
 set OUT_DIR=build
 set EXE_NAME=test.exe

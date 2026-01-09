@@ -2,7 +2,27 @@
 
 RenderState renderState;
 
+// Initialize default render state to avoid null dereferences
+static void RenderStateInit() {
+    if (renderState.width == 0 || renderState.height == 0 || renderState.memory == nullptr) {
+        renderState.width = 1060;
+        renderState.height = 1060;
+        int renderSize = renderState.width * renderState.height * sizeof(u32);
+        renderState.memory = VirtualAlloc(0, renderSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+
+        ZeroMemory(&renderState.bitMapInfo, sizeof(renderState.bitMapInfo));
+        renderState.bitMapInfo.bmiHeader.biSize        = sizeof(renderState.bitMapInfo.bmiHeader);
+        renderState.bitMapInfo.bmiHeader.biWidth       = renderState.width;
+        renderState.bitMapInfo.bmiHeader.biHeight      = -renderState.height;
+        renderState.bitMapInfo.bmiHeader.biPlanes      = 1;
+        renderState.bitMapInfo.bmiHeader.biBitCount    = 32;
+        renderState.bitMapInfo.bmiHeader.biCompression = BI_RGB;
+    }
+}
+
 void ClearScreen(u32 color) {
+    RenderStateInit();
+
     u32* pixel = (u32*)renderState.memory;
     for (int y = 0; y < renderState.height; y++) {
         for (int x = 0; x < renderState.width; x++) {
@@ -12,6 +32,8 @@ void ClearScreen(u32 color) {
 }
 
 void PixelDrawRect(int posX, int posY, int sizeX, int sizeY, u32 color) {
+    if (!renderState.memory || renderState.width <= 0 || renderState.height <= 0) return;
+
     posX = Clamp(0, posX, renderState.width);
     posY = Clamp(0, posY, renderState.height);
     sizeX = Clamp(0, sizeX, renderState.width);
@@ -25,7 +47,7 @@ void PixelDrawRect(int posX, int posY, int sizeX, int sizeY, u32 color) {
     }
 }
 
-void PixelDrawRectEmpty(int posX, int posY, int sizeX, int sizeY, int border, u32 color) {
+void PixelDrawRectEmpty(int posX, int posY, int sizeX, int sizeY, u32 border, u32 color) {
     posX = Clamp(0, posX, renderState.width);
     posY = Clamp(0, posY, renderState.height);
     sizeX = Clamp(0, sizeX, renderState.width);

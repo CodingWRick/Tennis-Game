@@ -22,7 +22,8 @@ void SimulateGame(Input* input, float deltaTime);
 
 namespace Game {
     void ENetInit();
-    void SetMoveP();
+    POINT DrawSelectTile();
+    void SetMoveP(POINT p);
     void ListPlayers();
     void SetPNeeded(u16 playerCount);
 }

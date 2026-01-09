@@ -12,8 +12,9 @@ void SimulateGame(Input* input, float deltaTime) {
         Game::ENetInit();
     }
 
+    POINT p = Game::DrawSelectTile();
     if(pressed(LEFT_MOUSE)) {
-        Game::SetMoveP();
+        Game::SetMoveP(p);
     }
 
     if(!players.empty() && players[myPlayerId].moving) {
@@ -49,10 +50,22 @@ namespace Game {
         }
     }
 
-    void SetMoveP() {
+    POINT DrawSelectTile() {
         POINT p;
         GetCursorPos(&p);
         if(gWindow) ScreenToClient(gWindow, &p);
+
+        u32 selectColor = 0xFFFF00;
+        float halfSize = step / 2.f;
+        u32 borderWidth = 20;
+        PixelDrawRectEmpty((float)(p.x) - halfSize, (float)(p.y) - halfSize, halfSize * 2, halfSize * 2, borderWidth, selectColor);
+        
+        Log(LOG_INFO, p.x + ", " + p.y);
+
+        return p;
+    }
+
+    void SetMoveP(POINT p) {
         players[myPlayerId].SetTarget((float)p.x, (float)p.y);
         players[myPlayerId].moving = true;
     }
