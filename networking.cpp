@@ -18,3 +18,26 @@ void SendMapData(ENetPeer *to) {
     size_t mapSize = mapData.size() * sizeof(POINT);
     SendData(mapData.data(), mapSize, to);
 }
+
+void SendPlayerData(ENetPeer *to) {
+    for (const Player& p : players) {
+        struct PlayerData {
+            int playerId;
+            float x, y;
+            bool moving;
+            int needed;
+        } pData;
+
+        pData.playerId = needed--;
+        pData.x = p.posX;
+        pData.y = p.posY;
+        pData.moving = p.moving;
+
+        SendData(&pData, sizeof(pData), to);
+    }
+}
+
+void SendPNeeded(ENetPeer *to) {
+    u16 pNeeded = (u16)currentClients + 1;
+    SendData(&pNeeded, sizeof(pNeeded), to);
+}

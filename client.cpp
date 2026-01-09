@@ -31,19 +31,7 @@ void ClientInit() {
                 while(enet_host_service(client, &event, 10) > 0) {
                     switch(event.type) {
                         case ENET_EVENT_TYPE_RECEIVE: {
-                            Log(LOG_INFO, "Paccehtto di lunghezza: " + std::to_string(event.packet->dataLength) + " è stato ricevuto dal server.");
-                            size_t bytes = event.packet->dataLength;
-                            if (bytes > 0 && bytes % sizeof(POINT) == 0) {
-                                size_t count = bytes / sizeof(POINT);
-                                POINT* pts = (POINT*)event.packet->data;
-                                std::vector<POINT> data;
-                                data.reserve(count);
-                                for (size_t i = 0; i < count; ++i) data.push_back(pts[i]);
-                                mapGenerator.SetMapData(data);
-                            } else {
-                                Log(LOG_ERROR, "Received malformed map data (size mismatch).");
-                            }
-                            enet_packet_destroy(event.packet);
+                            ClientGetPacket(event);
                             break;
                         }
                         case ENET_EVENT_TYPE_DISCONNECT:
@@ -61,4 +49,37 @@ void ClientInit() {
         enet_peer_reset(server);
         enet_host_destroy(client);
     }
+}
+
+void ClientGetPacket(ENetEvent event) {
+    u64 bytes = event.packet->dataLength;
+    if(bytes == sizeof(int) + sizeof(float) * 2 + sizeof(bool)) {
+        u16 pNeeded = 0;
+        for(Player &p : players) {
+            struct PlayerData {
+                int playerId;
+                float x, y;
+                bool moving;
+            }* pData = (PlayerData*)event.packet->data;
+
+            p.SetPlayerData(pData->playerId, pData->x, pData->y, pData->moving, myPlayerId);
+        }
+
+        SendPlayerData(event.peer);
+    } else if(bytes == sizeof(u16)) {
+        u16* pNeeded = (u16*)event.packet->data;
+        Game::SetPNeeded(*pNeeded);
+
+        SendPNeeded(event.peer);
+    } else if(bytes > 0 && bytes % sizeof(POINT) == 0) {
+        u64 count = bytes / sizeof(POINT);
+        POINT* pts = (POINT*)event.packet->data;
+        std::vector<POINT> data;
+        data.reserve(count);
+        for (u64 i = 0; i < count; ++i) data.push_back(pts[i]);
+        mapGenerator.SetMapData(data);
+    } else {
+        Log(LOG_ERROR, "Received malformed data packet (size mismatch).");
+    }
+    enet_packet_destroy(event.packet);
 }

@@ -49,3 +49,12 @@ void Player::FollowPath(float deltaTime) {
     posX += dirX * speed * deltaTime;
     posY += dirY * speed * deltaTime;
 }
+
+void Player::SetPlayerData(int id, float x, float y, bool isMoving, int myId) {
+    if(id == myId) {
+        playerId = id;
+        posX = x;
+        posY = y;
+        moving = isMoving;
+    }
+}

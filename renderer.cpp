@@ -17,10 +17,24 @@ void PixelDrawRect(int posX, int posY, int sizeX, int sizeY, u32 color) {
     sizeX = Clamp(0, sizeX, renderState.width);
     sizeY = Clamp(0, sizeY, renderState.height);
 
-    for (int y = posY; y < sizeY; y++) {
+    for(int y = posY; y < sizeY; y++) {
         u32* pixel = (u32*)renderState.memory + posX + y * renderState.width;
-        for (int x = posX; x < sizeX; x++) {
+        for(int x = posX; x < sizeX; x++) {
             *pixel++ = color;
+        }
+    }
+}
+
+void PixelDrawRectEmpty(int posX, int posY, int sizeX, int sizeY, int border, u32 color) {
+    posX = Clamp(0, posX, renderState.width);
+    posY = Clamp(0, posY, renderState.height);
+    sizeX = Clamp(0, sizeX, renderState.width);
+    sizeY = Clamp(0, sizeY, renderState.height);
+
+    for(int y = posY; y < sizeY; y++) {
+        u32* pixel = (u32*)renderState.memory + posX + y * renderState.width;
+        for(int x = posX; x < sizeX; x++){
+            *pixel++ = (x < posX + border || x >= sizeX - border || y < posY + border || y >= sizeY - border) ? color : *pixel;
         }
     }
 }

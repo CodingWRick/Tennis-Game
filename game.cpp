@@ -3,11 +3,34 @@
 std::vector<Player> players;
 bool eNetInit = false;
 int myPlayerId = 0;
+u16 needed = 0;
 MapGenerator mapGenerator;
 
 void SimulateGame(Input* input, float deltaTime) {
-    ClearScreen(0x00FF00);
+    ClearScreen(0xFFFFFF);
     if(!eNetInit) {
+        Game::ENetInit();
+    }
+
+    if(pressed(LEFT_MOUSE)) {
+        Game::SetMoveP();
+    }
+
+    if(!players.empty() && players[myPlayerId].moving) {
+        players[myPlayerId].Move(deltaTime);
+    }
+
+    mapGenerator.DrawMap();
+
+    Game::ListPlayers();
+
+    for(Player& p : players) {
+        p.Draw();
+    }
+}
+
+namespace Game {
+    void ENetInit() {
         if(enet_initialize() != 0) {
             Log(LOG_ERROR, "Failed to initialize ENet.");
         } else {
@@ -26,7 +49,7 @@ void SimulateGame(Input* input, float deltaTime) {
         }
     }
 
-    if(pressed(LEFT_MOUSE)) {
+    void SetMoveP() {
         POINT p;
         GetCursorPos(&p);
         if(gWindow) ScreenToClient(gWindow, &p);
@@ -34,23 +57,20 @@ void SimulateGame(Input* input, float deltaTime) {
         players[myPlayerId].moving = true;
     }
 
-    if(!players.empty() && players[myPlayerId].moving) {
-        players[myPlayerId].Move(deltaTime);
-    }
-
-    mapGenerator.DrawMap();
-
-    // Ensure we have one Player per connected client plus one for the server host.
-    size_t needed = (size_t)currentClients + 1;
-    if (players.size() < needed) {
-        for (size_t i = players.size(); i < needed; ++i) {
-            Player newPlayer;
-            newPlayer.playerId = (int)i;
-            players.push_back(newPlayer);
+    void ListPlayers() {
+        needed = (u16)currentClients + 1;
+        if (players.size() < needed) {
+            for (u16 i = players.size(); i < needed; ++i) {
+                Player newPlayer;
+                newPlayer.playerId = (int)i;
+                players.push_back(newPlayer);
+            }
+        } else if (players.size() > needed) {
+            players.resize(needed);
         }
     }
 
-    for(Player& p : players) {
-        p.Draw();
+    void SetPNeeded(u16 playerCount) {
+        needed = playerCount;
     }
 }

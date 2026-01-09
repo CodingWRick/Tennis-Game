@@ -13,7 +13,6 @@ set FLAGS=-std=c++20 -Wall -Wextra -O2 -static
 set OUT_DIR=build
 set EXE_NAME=test.exe
 
-:: === ENet paths (YOUR STRUCTURE) ===
 set ENET_ROOT=enet-1.3.18
 set ENET_INCLUDE=%ENET_ROOT%\include
 set ENET_SRC=%ENET_ROOT%\callbacks.c ^

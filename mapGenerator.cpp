@@ -12,7 +12,8 @@ void MapGenerator::DrawMap() {
                 tilePos.y = y;
                 openPos.push_back(tilePos);
 
-                PixelDrawRect(x, y, x + (int)step, y + (int)step, grassColor);
+                PixelDrawRect(x, y, (int)step, (int)step, grassColor);
+                Log(LOG_DEBUG, "Generated normal tile at (" + std::to_string(x) + ", " + std::to_string(y) + ").");
             }
         }
 
@@ -20,9 +21,13 @@ void MapGenerator::DrawMap() {
         mapGenerated = true;
     }
     else {
+        mapGenerated = false;
+        
         for(const POINT &pos : openPos) {
             PixelDrawRect(pos.x, pos.y, (int)step, (int)step, grassColor);
         }
+
+        mapGenerated = true;
     }
 
     DrawObstacles();

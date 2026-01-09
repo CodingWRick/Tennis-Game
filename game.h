@@ -16,9 +16,16 @@
 
 extern bool eNetInit;
 extern int myPlayerId;
+extern u16 needed;
 
-// Use internal if you want this function private to game.cpp
 void SimulateGame(Input* input, float deltaTime);
+
+namespace Game {
+    void ENetInit();
+    void SetMoveP();
+    void ListPlayers();
+    void SetPNeeded(u16 playerCount);
+}
 
 class Player;
 extern std::vector<Player> players;

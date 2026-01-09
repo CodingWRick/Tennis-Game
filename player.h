@@ -24,6 +24,7 @@ class Player {
         void Draw();
         void Move(float deltaTime);
         void SetTarget(float x, float y);
+        void SetPlayerData(int id, float x, float y, bool isMoving, int myId);
     private:
         vector<Node*> path;
 
