@@ -1,9 +1,8 @@
 #pragma once
 #include <vector>
-#include "../Engine/renderer.h"
+#include "../Engine/base.h"
 #include "PathFinding/AStarManager.h"
 #include "PathFinding/node.h"
-#include "../Engine/logger.h"
 
 class MapGenerator {
     public:
@@ -16,7 +15,6 @@ class MapGenerator {
         void DrawObstacles();
         void GenerateNodeGrid();
         void ResetMap();
-        void TilePosInit(int x, int y);
 
         int maxObstacles;
 

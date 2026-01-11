@@ -7,6 +7,8 @@ float nodeStep;
 vector<Node*> GeneratePath(Node* startNode, Node* targetNode) {
     vector<Node*> openSet;
 
+    if (!startNode || !targetNode) return vector<Node*>();
+
     for(Node* n : nodes) {
         n->gCost = FLT_MAX;
     }
@@ -16,7 +18,7 @@ vector<Node*> GeneratePath(Node* startNode, Node* targetNode) {
     openSet.push_back(startNode);
 
     while (!openSet.empty()) {
-        int lowestF = GetLowestF();
+        int lowestF = GetLowestF(openSet);
 
         Node* currentNode = openSet[lowestF];
         openSet.erase(openSet.begin() + lowestF);
@@ -40,7 +42,7 @@ vector<Node*> GeneratePath(Node* startNode, Node* targetNode) {
 }
 
 Node* FindClosestNode(float x, float y) {
-    Node* foundNode;
+    Node* foundNode = nullptr;
     float minDist = FLT_MAX;
 
     for (Node* n : nodes) {
@@ -55,7 +57,7 @@ Node* FindClosestNode(float x, float y) {
 }
 
 Node* FindFurthestNode(float x, float y) {
-    Node* foundNode;
+    Node* foundNode = nullptr;
     float maxDist = 0.f;
 
     for (Node* n : nodes) {
@@ -86,10 +88,10 @@ void AssignNeighbors(Node* currentNode, Node* targetNode, vector<Node*>& openSet
     }
 }
 
-int GetLowestF() {
+int GetLowestF(const vector<Node*>& openSet) {
     int lowestF = 0;
-    for (u64 i = 1; i < nodes.size(); i++) {
-        if (nodes[i]->fCost() < nodes[lowestF]->fCost()) {
+    for (u64 i = 1; i < openSet.size(); i++) {
+        if (openSet[i]->fCost() < openSet[lowestF]->fCost()) {
             lowestF = i;
         }
     }

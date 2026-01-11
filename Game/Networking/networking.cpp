@@ -31,7 +31,6 @@ void SendPlayerData(ENetPeer *to) {
         pData.playerId = needed--;
         pData.x = p.posX;
         pData.y = p.posY;
-        pData.moving = p.moving;
 
         SendData(&pData, sizeof(pData), to);
     }

@@ -3,9 +3,7 @@
 #include <iostream>
 #include <thread>
 #include <vector>
-#include "../Engine/platformCommon.h"
-#include "../Engine/renderer.h"
-#include "../Engine/logger.h"
+#include "../Engine/base.h"
 #include "player.h"
 #include "mapGenerator.h"
 #include "Networking/networking.h"
@@ -22,8 +20,7 @@ void SimulateGame(Input* input, float deltaTime);
 
 namespace Game {
     void ENetInit();
-    POINT DrawSelectTile();
-    void SetMoveP(POINT p);
+    void DrawSelectTile(POINT p);
     void ListPlayers();
     void SetPNeeded(u16 playerCount);
 }

@@ -1,10 +1,9 @@
 #pragma once
 #include <vector>
 #include <iostream>
-#include "../Engine/renderer.h"
+#include "../Engine/base.h"
 #include "mapGenerator.h"
 #include "../Engine/win32.h"
-#include "../Engine/logger.h"
 
 class Player {
     public:
@@ -15,8 +14,6 @@ class Player {
 
         float speed = 100.f;
 
-        bool moving = false;
-
         float halfSize = 25.f;  
 
         u32 color = 0x000000;
@@ -24,7 +21,7 @@ class Player {
         void Draw();
         void Move(float deltaTime);
         void SetTarget(float x, float y);
-        void SetPlayerData(int id, float x, float y, bool isMoving, int myId);
+        void SetPlayerData(int id, float x, float y, int myId);
     private:
         vector<Node*> path;
 

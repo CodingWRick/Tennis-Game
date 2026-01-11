@@ -8,22 +8,27 @@ MapGenerator mapGenerator;
 
 void SimulateGame(Input* input, float deltaTime) {
     ClearScreen(0xFFFFFF);
+
     if(!eNetInit) {
         Game::ENetInit();
     }
 
-    POINT p = Game::DrawSelectTile();
+    Game::ListPlayers();
+
+    POINT p;
+    GetCursorPos(&p);
+    if(gWindow) ScreenToClient(gWindow, &p);
+
+    //Game::DrawSelectTile(p);
     if(pressed(LEFT_MOUSE)) {
-        Game::SetMoveP(p);
+        players[myPlayerId].SetTarget((float)p.x, (float)p.y);
     }
 
-    if(!players.empty() && players[myPlayerId].moving) {
+    if(!players.empty()) {
         players[myPlayerId].Move(deltaTime);
     }
 
     mapGenerator.DrawMap();
-
-    Game::ListPlayers();
 
     for(Player& p : players) {
         p.Draw();
@@ -47,28 +52,22 @@ namespace Game {
                 }
             }).detach();
             eNetInit = true;
+            Log(LOG_ERROR, "Malformed packet, impossible to send player data and sync obstacles.");
         }
     }
 
-    POINT DrawSelectTile() {
-        POINT p;
-        GetCursorPos(&p);
-        if(gWindow) ScreenToClient(gWindow, &p);
-
+    /*
+    void DrawSelectTile(POINT p) {
         u32 selectColor = 0xFFFF00;
-        float halfSize = step / 2.f;
+        u32 size = (u32)step;
         u32 borderWidth = 20;
-        PixelDrawRectEmpty((float)(p.x) - halfSize, (float)(p.y) - halfSize, halfSize * 2, halfSize * 2, borderWidth, selectColor);
-        
-        Log(LOG_INFO, p.x + ", " + p.y);
 
-        return p;
-    }
+        int x0 = (int)(FindClosestNode(p.x, p.y)->posX); // Line 63 and 64 crashing game
+        int y0 = (int)(FindClosestNode(p.x, p.y)->posY);
 
-    void SetMoveP(POINT p) {
-        players[myPlayerId].SetTarget((float)p.x, (float)p.y);
-        players[myPlayerId].moving = true;
+        PixelDrawRectEmpty(x0, y0, size, size, borderWidth, selectColor);
     }
+    */
 
     void ListPlayers() {
         needed = (u16)currentClients + 1;

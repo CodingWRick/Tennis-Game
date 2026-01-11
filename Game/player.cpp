@@ -3,8 +3,8 @@
 void Player::Draw() {
     int x = (int)(posX - halfSize);
     int y = (int)(posY - halfSize);
-    int x1 = (int)(posX + halfSize);
-    int y1 = (int)(posY + halfSize);
+    int x1 = (int)(halfSize * 2);
+    int y1 = (int)(halfSize * 2);
     PixelDrawRect(x, y, x1, y1, color);
 }
 
@@ -50,11 +50,10 @@ void Player::FollowPath(float deltaTime) {
     posY += dirY * speed * deltaTime;
 }
 
-void Player::SetPlayerData(int id, float x, float y, bool isMoving, int myId) {
+void Player::SetPlayerData(int id, float x, float y, int myId) {
     if(id == myId) {
         playerId = id;
         posX = x;
         posY = y;
-        moving = isMoving;
     }
 }

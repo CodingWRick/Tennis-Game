@@ -53,33 +53,39 @@ void ClientInit() {
 
 void ClientGetPacket(ENetEvent event) {
     u64 bytes = event.packet->dataLength;
-    if(bytes == sizeof(int) + sizeof(float) * 2 + sizeof(bool)) {
-        u16 pNeeded = 0;
-        for(Player &p : players) {
-            struct PlayerData {
-                int playerId;
-                float x, y;
-                bool moving;
-            }* pData = (PlayerData*)event.packet->data;
+    switch(bytes) {
+        case sizeof(int) + sizeof(float) * 2 + sizeof(bool): {
+            for(Player &p : players) {
+                struct PlayerData {
+                    int playerId;
+                    float x, y;
+                    bool moving;
+                }* pData = (PlayerData*)event.packet->data;
 
-            p.SetPlayerData(pData->playerId, pData->x, pData->y, pData->moving, myPlayerId);
+                p.SetPlayerData(pData->playerId, pData->x, pData->y, myPlayerId);
+            }
+
+            SendPlayerData(event.peer);
+            break;
         }
+        case sizeof(u16): {
+            u16* pNeeded = (u16*)event.packet->data;
+            Game::SetPNeeded(*pNeeded);
 
-        SendPlayerData(event.peer);
-    } else if(bytes == sizeof(u16)) {
-        u16* pNeeded = (u16*)event.packet->data;
-        Game::SetPNeeded(*pNeeded);
-
-        SendPNeeded(event.peer);
-    } else if(bytes > 0 && bytes % sizeof(POINT) == 0) {
-        u64 count = bytes / sizeof(POINT);
-        POINT* pts = (POINT*)event.packet->data;
-        std::vector<POINT> data;
-        data.reserve(count);
-        for (u64 i = 0; i < count; ++i) data.push_back(pts[i]);
-        mapGenerator.SetMapData(data);
-    } else {
-        Log(LOG_ERROR, "Received malformed data packet (size mismatch).");
+            SendPNeeded(event.peer);
+            break;
+        }
+        default: {
+            if(bytes > 0 && bytes % sizeof(POINT) == 0) {
+                u64 count = bytes / sizeof(POINT);
+                POINT* pts = (POINT*)event.packet->data;
+                std::vector<POINT> data;
+                data.reserve(count);
+                for(u64 i = 0; i < count; ++i) data.push_back(pts[i]);
+                mapGenerator.SetMapData(data);
+            }
+            break;
+        }
     }
     enet_packet_destroy(event.packet);
 }

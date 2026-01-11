@@ -1,9 +1,7 @@
 #include <windows.h>
 #include <iostream>
-#include "utils.h"
-#include "platformCommon.h"
-#include "renderer.h"
-#include "game.h"
+#include "base.h"
+#include "../Game/game.h"
 
 globalVar bool running = true;
 

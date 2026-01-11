@@ -5,25 +5,22 @@ void MapGenerator::DrawMap() {
 
     if(!mapGenerated) {
         openPos.clear();
-        for(int x = 0; x < renderState.width; x += (int)step) {
-            for(int y = 0; y < renderState.height; y += (int)step) {
-                TilePosInit(x, y);
+        for(u32 x = 0; x < renderState.width; x += (u32)step) {
+            for(u32 y = 0; y < renderState.height; y += (u32)step) {
+                POINT tilePos;
+                tilePos.x = x;
+                tilePos.y = y;
 
-                PixelDrawRect(x, y, (int)step, (int)step, grassColor);
+                openPos.push_back(tilePos);
             }
         }
 
-        Log(LOG_ERROR, "Normal tiles not generating, using clearscreen instead.");
         mapGenerated = true;
     }
     else {
-        mapGenerated = false;
-        
         for(const POINT &pos : openPos) {
-            PixelDrawRect(pos.x, pos.y, (int)step, (int)step, grassColor);
+            PixelDrawRect(pos.x, pos.y, (u32)step, (u32)step, grassColor);
         }
-
-        mapGenerated = true;
     }
 
     DrawObstacles();
@@ -32,37 +29,29 @@ void MapGenerator::DrawMap() {
 }
 
 void MapGenerator::DrawObstacles() {
-    maxObstacles = int(0.00001f * renderState.width * renderState.height);
+    float obstaclesMtpr = 0.00001f;
+    maxObstacles = int(obstaclesMtpr * renderState.width * renderState.height);
 
     if(obstacles.empty() && !regeneratingMap) {
         obstacles.clear();
         int available = (int)openPos.size();
         int toPlace = maxObstacles;
-        if (toPlace > available) toPlace = available;
+        if(toPlace > available) toPlace = available;
 
         for(int i = 1; i < toPlace; ++i) {
             if (openPos.empty()) break;
-            int index = rand() % (int)openPos.size();
+            int index = rand() % (int)openPos.size(); 
             POINT obstaclePos = openPos[index];
 
             obstacles.push_back(obstaclePos);
-            PixelDrawRect(obstaclePos.x, obstaclePos.y, obstaclePos.x + (int)step, obstaclePos.y + (int)step, waterColor);
-
             openPos.erase(openPos.begin() + index);
         }
     }
     else {
         for(const POINT &pos : obstacles) {
-            PixelDrawRect(pos.x, pos.y, pos.x + (int)step, pos.y + (int)step, waterColor);
+            PixelDrawRect(pos.x, pos.y, (u32)step, (u32)step, waterColor);
         }
     }
-}
-
-void MapGenerator::TilePosInit(int x, int y) {
-    POINT tilePos;
-    tilePos.x = x;
-    tilePos.y = y;
-    openPos.push_back(tilePos);
 }
 
 void MapGenerator::GenerateNodeGrid() {
@@ -95,6 +84,7 @@ void MapGenerator::ResetMap() {
 
 const std::vector<POINT>& MapGenerator::GetMapData() {
     return obstacles;
+    Log(LOG_ERROR, "Obstacles being registered as open positions, send both openPos and obstacles in a struct.");
 }
 
 void MapGenerator::SetMapData(const std::vector<POINT>& data) {

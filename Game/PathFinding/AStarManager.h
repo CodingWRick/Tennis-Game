@@ -3,9 +3,8 @@
 #include <cfloat>
 #include <vector>
 #include <algorithm>
-#include "../../Engine/utils.h"
+#include "../../Engine/base.h"
 #include "node.h"
-#include "../../Engine/renderer.h"
 
 using namespace std;
 
@@ -17,4 +16,4 @@ vector<Node*> GeneratePath(Node* startNode, Node* targetNode);
 Node* FindClosestNode(float x, float y);
 Node* FindFurthestNode(float x, float y);
 void AssignNeighbors(Node* currentNode, Node* targetNode, vector<Node*>& openSet);
-int GetLowestF();
+int GetLowestF(const vector<Node*>& openSet);
